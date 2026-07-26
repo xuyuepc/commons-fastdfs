@@ -9,7 +9,7 @@ import requests
 from bs4 import BeautifulSoup
 
 from .config import CACHE_DIR, ODDSMATH_LEAGUE_KEYS, USER_AGENT
-from .teams import normalize_team
+from .leagues import match_big5_league, normalize_team
 
 
 def _cache_path(day: date) -> Path:
@@ -184,6 +184,38 @@ def filter_kleague(odds_df: pd.DataFrame) -> pd.DataFrame:
         }
         mask = odds_df["home"].isin(known) & odds_df["away"].isin(known)
     return odds_df.loc[mask].reset_index(drop=True)
+
+
+def filter_big5(
+    odds_df: pd.DataFrame,
+    club_set: set[str] | None = None,
+    include_friendlies: bool = True,
+) -> pd.DataFrame:
+    """筛选五大联赛正式场次；夏季可附带五大联赛球队友谊赛。"""
+    if odds_df.empty:
+        return odds_df
+
+    rows = odds_df.copy()
+    rows["league_key"] = rows["league"].map(match_big5_league)
+    official = rows[rows["league_key"].notna()].copy()
+
+    friendly = pd.DataFrame()
+    if include_friendlies and club_set:
+        is_friendly = (
+        rows["league"]
+        .fillna("")
+        .astype(str)
+        .str.contains(r"friendl", case=False, na=False, regex=True)
+    )
+        touched = rows["home"].isin(club_set) | rows["away"].isin(club_set)
+        friendly = rows.loc[is_friendly & touched].copy()
+        friendly["league_key"] = "FRIENDLY"
+        friendly["league"] = "五大联赛友谊赛"
+
+    out = pd.concat([official, friendly], ignore_index=True) if not friendly.empty else official
+    if out.empty:
+        return out
+    return out.drop_duplicates(["home", "away", "kickoff", "date"]).reset_index(drop=True)
 
 
 def _is_kleague_label(label: str) -> bool:

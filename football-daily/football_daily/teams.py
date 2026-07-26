@@ -1,8 +1,3 @@
-from __future__ import annotations
+from .leagues import normalize_team
 
-from .config import TEAM_ALIASES
-
-
-def normalize_team(name: str) -> str:
-    name = (name or "").strip()
-    return TEAM_ALIASES.get(name, name)
+__all__ = ["normalize_team"]

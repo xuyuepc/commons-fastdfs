@@ -6,3 +6,5 @@ __pycache__/
 data/cache/
 data/daily_*.csv
 .DS_Store
+reports/*.html
+!reports/.gitkeep
