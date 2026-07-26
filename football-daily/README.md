@@ -5,34 +5,37 @@
 默认联赛：**英超 / 西甲 / 意甲 / 德甲 / 法甲**（不做中超）。  
 模型：GitHub [penaltyblog](https://github.com/martineastwood/penaltyblog) Dixon-Coles × 市场去水欧赔。
 
-## 安装
+## 在你自己电脑上用（推荐）
 
+### Windows
+1. 安装 [Python 3.10+](https://www.python.org/downloads/)（勾选 Add Python to PATH）
+2. 把本仓库的 `football-daily` 文件夹放到本地
+3. **双击** `生成日报.bat`
+4. 浏览器会自动打开；文件在 `reports\daily_big5_今天日期.html`
+
+指定日期：双击 `生成指定日期.bat`，按提示输入 `YYYY-MM-DD`。
+
+### macOS / Linux
 ```bash
 cd football-daily
-pip install -r requirements.txt
+python3 -m pip install -r requirements.txt
+python3 -m football_daily --open
 ```
 
-## 每日生成 HTML
+HTML 生成在本地：
+`football-daily/reports/daily_big5_YYYY-MM-DD.html`
+
+### 常用命令
 
 ```bash
-# 今天（默认输出 reports/daily_big5_YYYY-MM-DD.html）
-python3 -m football_daily
+# 今天
+python3 -m football_daily --open
 
-# 指定日期，并自动打开浏览器
-python3 -m football_daily --date 2026-07-26 --open
+# 指定日期
+python3 -m football_daily --date 2025-12-14 --open
 
-# 只要正式联赛，不要友谊赛
-python3 -m football_daily --no-friendlies
-
-# 自定义 HTML 路径
-python3 -m football_daily --html reports/today.html --open
-```
-
-生成后打开：
-
-```bash
-open reports/daily_big5_2026-07-26.html   # macOS
-xdg-open reports/daily_big5_2026-07-26.html  # Linux
+# 不要友谊赛
+python3 -m football_daily --no-friendlies --open
 ```
 
 ## 说明
